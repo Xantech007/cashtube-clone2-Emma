@@ -1,17 +1,14 @@
 <?php
 session_start();
 require_once '../database/conn.php';
-
 // Set time zone to UTC
 date_default_timezone_set('UTC');
-
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     error_log('No user_id in session, redirecting to signin', 3, '../debug.log');
     header('Location: ../signin.php');
     exit;
 }
-
 // Fetch user data
 try {
     $stmt = $pdo->prepare("SELECT name, balance, COALESCE(country, '') AS country FROM users WHERE id = ?");
@@ -32,19 +29,18 @@ try {
     header('Location: ../signin.php?error=database');
     exit;
 }
-
 // Fetch region settings for labels
 try {
     $stmt = $pdo->prepare("
-        SELECT COALESCE(ch_name, 'Bank Name') AS ch_name, 
-               COALESCE(ch_value, 'Bank Account') AS ch_value, 
+        SELECT COALESCE(ch_name, 'Bank Name') AS ch_name,
+               COALESCE(ch_value, 'Bank Account') AS ch_value,
                COALESCE(channel, 'Bank') AS channel_label
-        FROM region_settings 
+        FROM region_settings
         WHERE country = ?
     ");
     $stmt->execute([$user_country]);
     $region_settings = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+   
     if ($region_settings) {
         $ch_name = htmlspecialchars($region_settings['ch_name']);
         $ch_value = htmlspecialchars($region_settings['ch_value']);
@@ -62,13 +58,12 @@ try {
     $channel_label = 'Bank';
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Contact Task Tube's support team 24/7 via WhatsApp for assistance with your account, login, or general inquiries." />
+    <meta name="description" content="Contact Task Tube's support team 24/7 via WhatsApp or email for help with your account, login, verification, or other inquiries." />
     <meta name="keywords" content="Task Tube, contact support, earn money online, watch ads, customer service" />
     <meta name="author" content="Task Tube" />
     <title>Contact Support | Task Tube</title>
@@ -93,7 +88,6 @@ try {
             --status-pending: #eab308;
             --status-rejected: #ef4444;
         }
-
         [data-theme="dark"] {
             --bg-color: #1f2937;
             --gradient-bg: linear-gradient(135deg, #1f2937, #374151);
@@ -110,14 +104,12 @@ try {
             --status-pending: #facc15;
             --status-rejected: #f87171;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
-
         body {
             background: var(--bg-color);
             color: var(--text-color);
@@ -125,14 +117,12 @@ try {
             padding-bottom: 100px;
             transition: all 0.3s ease;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 24px;
             position: relative;
         }
-
         .header {
             display: flex;
             align-items: center;
@@ -140,25 +130,21 @@ try {
             padding: 24px 0;
             animation: slideIn 0.5s ease-out;
         }
-
         .header img {
             width: 64px;
             height: 64px;
             margin-right: 16px;
             border-radius: 8px;
         }
-
         .header-text h1 {
             font-size: 26px;
             font-weight: 700;
         }
-
         .header-text p {
             font-size: 16px;
             color: var(--subtext-color);
             margin-top: 4px;
         }
-
         .theme-toggle {
             background: var(--accent-color);
             color: #fff;
@@ -170,12 +156,10 @@ try {
             font-weight: 500;
             transition: background 0.3s ease, transform 0.2s ease;
         }
-
         .theme-toggle:hover {
             background: var(--accent-hover);
             transform: scale(1.02);
         }
-
         .contact-section {
             background: var(--card-bg);
             border-radius: 16px;
@@ -184,14 +168,12 @@ try {
             margin: 24px 0;
             animation: slideIn 0.5s ease-out 0.6s backwards;
         }
-
         .contact-section h2 {
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 20px;
             color: var(--accent-color);
         }
-
         .contact-section p {
             font-size: 16px;
             color: var(--subtext-color);
@@ -199,28 +181,23 @@ try {
             margin-bottom: 20px;
             text-align: left;
         }
-
         .contact-info p strong {
             color: var(--text-color);
             font-weight: 600;
         }
-
         .contact-info p a {
             color: var(--accent-color);
             text-decoration: none;
         }
-
         .contact-info p a:hover {
             text-decoration: underline;
         }
-
         .contact-section ul {
             list-style: none;
             padding: 0;
             margin-bottom: 20px;
             text-align: left;
         }
-
         .contact-section ul li {
             font-size: 16px;
             color: var(--subtext-color);
@@ -229,7 +206,6 @@ try {
             position: relative;
             padding-left: 30px;
         }
-
         .contact-section ul li::before {
             content: '\f058';
             font-family: 'Font Awesome 6 Free';
@@ -239,7 +215,6 @@ try {
             left: 0;
             top: 2px;
         }
-
         .cta-banner {
             background: var(--gradient-bg);
             color: var(--text-color);
@@ -249,13 +224,11 @@ try {
             margin: 40px 0;
             box-shadow: 0 6px 16px var(--shadow-color);
         }
-
         .cta-banner h2 {
             font-size: 32px;
             font-weight: 600;
             margin-bottom: 20px;
         }
-
         .cta-banner .btn {
             background-color: var(--accent-color);
             color: #fff;
@@ -266,11 +239,9 @@ try {
             text-decoration: none;
             transition: background-color 0.3s ease;
         }
-
         .cta-banner .btn:hover {
             background-color: var(--accent-hover);
         }
-
         .signup-link .btn {
             background-color: var(--accent-color);
             color: #fff;
@@ -282,11 +253,9 @@ try {
             transition: all 0.3s ease;
             cursor: pointer;
         }
-
         .signup-link .btn:hover {
             background-color: var(--accent-hover);
         }
-
         .notification {
             position: fixed;
             top: 20px;
@@ -304,27 +273,22 @@ try {
             max-width: 300px;
             transition: transform 0.2s ease;
         }
-
         .notification:hover {
             transform: scale(1.05);
         }
-
         .notification::before {
             content: '🔒';
             font-size: 1.2rem;
             margin-right: 12px;
             color: var(--accent-color);
         }
-
         .notification.error::before {
             content: '⚠️';
         }
-
         .notification span {
             font-size: 14px;
             font-weight: 500;
         }
-
         @keyframes slideInRight {
             from {
                 opacity: 0;
@@ -335,14 +299,12 @@ try {
                 transform: translateX(0);
             }
         }
-
         @keyframes fadeOut {
             to {
                 opacity: 0;
                 transform: translateY(-20px);
             }
         }
-
         .bottom-menu {
             position: fixed;
             bottom: 0;
@@ -355,7 +317,6 @@ try {
             padding: 14px 0;
             box-shadow: 0 -2px 8px var(--shadow-color);
         }
-
         .bottom-menu a,
         .bottom-menu button {
             color: var(--menu-text);
@@ -368,13 +329,11 @@ try {
             border: none;
             cursor: pointer;
         }
-
         .bottom-menu a.active,
         .bottom-menu a:hover,
         .bottom-menu button:hover {
             color: var(--accent-color);
         }
-
         #gradient {
             position: fixed;
             top: 0;
@@ -385,49 +344,39 @@ try {
             background: var(--gradient-bg);
             transition: all 0.3s ease;
         }
-
         @media (max-width: 768px) {
             .container {
                 padding: 16px;
             }
-
             .header-text h1 {
                 font-size: 22px;
             }
-
             .contact-section {
                 padding: 20px;
             }
-
             .cta-banner h2 {
                 font-size: 28px;
             }
-
             .cta-banner .btn {
                 padding: 12px 30px;
                 font-size: 16px;
             }
-
             .notification {
                 max-width: 250px;
                 right: 10px;
                 top: 10px;
             }
         }
-
         @media (max-width: 480px) {
             .header-text h1 {
                 font-size: 20px;
             }
-
             .contact-section {
                 padding: 15px;
             }
-
             .cta-banner {
                 padding: 40px 15px;
             }
-
             .cta-banner h2 {
                 font-size: 24px;
             }
@@ -442,46 +391,43 @@ try {
                 <img src="img/top.png" alt="Task Tube Logo" aria-label="Task Tube Logo">
                 <div class="header-text">
                     <h1>Contact Support, <?php echo $username; ?>!</h1>
-                    <p>Reach out to our 24/7 support team.</p>
+                    <p>Reach out to our 24/7 support team via WhatsApp or email.</p>
                 </div>
             </div>
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">Toggle Dark Mode</button>
         </div>
-
         <div class="contact-section">
             <h2>Get in Touch</h2>
             <p>
-                We're here to help with any questions or issues you may have! At Task Tube, our dedicated support team is available 24/7. Whether you need help with your account, login, or have general inquiries, feel free to reach out.
+                We're here to help with any questions or issues! Our support team is available 24/7. 
+                Reach out via WhatsApp (fastest response) or email — whichever works best for you.
             </p>
-
             <div class="contact-info">
                 <h2>Contact Information</h2>
-                <p><i class="fab fa-whatsapp"></i> WhatsApp Contact: <strong><a href="https://wa.me/+17655329001" target="_blank">+1 (765) 532-9001</a></strong></p>
+                <p><i class="fab fa-whatsapp"></i> WhatsApp: <strong><a href="https://wa.me/+17655329331" target="_blank">+1 (765) 532-9331</a></strong></p>
+                <p><i class="far fa-envelope"></i> Email Support: <strong><a href="mailto:withtasktubeearnmoney@gmail.com">withtasktubeearnmoney@gmail.com</a></strong></p>
                 <p><i class="far fa-clock"></i> Availability: <strong>24/7</strong></p>
-                <p><i class="fas fa-hourglass-half"></i> Response Time: <strong>Usually within 24 hours</strong></p>
+                <p><i class="fas fa-hourglass-half"></i> Response Time: <strong>Usually within 24 hours (WhatsApp faster)</strong></p>
             </div>
-
             <div class="categories">
                 <h2>We Can Help With:</h2>
                 <ul>
                     <li>Technical Support for Login/Access Issues</li>
                     <li>Verification Requests</li>
+                    <li>Account & Balance Questions</li>
+                    <li>General Inquiries</li>
                 </ul>
             </div>
-
             <p class="signup-link">
                 Not yet a member? <a href="register.php" class="btn">Sign Up Now</a>
             </p>
         </div>
-
         <div class="cta-banner">
             <h2>Need Help? Contact Us Now!</h2>
-            <a href="https://wa.me/+17655329001" target="_blank" class="btn" onclick="console.log('CTA button clicked')">Message Us on WhatsApp</a>
+            <a href="https://wa.me/+17655329331" target="_blank" class="btn" onclick="console.log('CTA button clicked')">Message Us on WhatsApp</a>
         </div>
-
         <div id="notificationContainer"></div>
     </div>
-
     <div class="bottom-menu" role="navigation">
         <a href="home.php">Home</a>
         <a href="profile.php">Profile</a>
@@ -489,7 +435,6 @@ try {
         <a href="support.php" class="active">Support</a>
         <button id="logoutBtn" aria-label="Log out">Logout</button>
     </div>
-
     <script>
         window.__lc = window.__lc || {};
         window.__lc.license = 15808029;
@@ -513,7 +458,6 @@ try {
             !n.__lc.asyncInit && e.init();
             n.LiveChatWidget = n.LiveChatWidget || e;
         })(window, document, [].slice);
-
         // Dark Mode Toggle
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
@@ -522,14 +466,12 @@ try {
             body.setAttribute('data-theme', 'dark');
             themeToggle.textContent = 'Toggle Light Mode';
         }
-
         themeToggle.addEventListener('click', () => {
             const isDark = body.getAttribute('data-theme') === 'dark';
             body.setAttribute('data-theme', isDark ? 'light' : 'dark');
             themeToggle.textContent = isDark ? 'Toggle Dark Mode' : 'Toggle Light Mode';
             localStorage.setItem('theme', isDark ? 'light' : 'dark');
         });
-
         // Menu Interactions
         const menuItems = document.querySelectorAll('.bottom-menu a');
         menuItems.forEach((item) => {
@@ -538,7 +480,6 @@ try {
                 item.classList.add('active');
             });
         });
-
         // Logout Button
         document.getElementById('logoutBtn').addEventListener('click', () => {
             Swal.fire({
@@ -577,7 +518,6 @@ try {
                 }
             });
         });
-
         // Notification Handling
         const notificationContainer = document.getElementById('notificationContainer');
         function fetchNotifications() {
@@ -602,10 +542,8 @@ try {
                 }
             });
         }
-
         fetchNotifications();
         setInterval(fetchNotifications, 20000);
-
         // Gradient Animation
         var colors = [
             [62, 35, 255],
@@ -619,7 +557,6 @@ try {
         var colorIndices = [0, 1, 2, 3];
         var gradientSpeed = 0.002;
         const gradientElement = document.getElementById('gradient');
-
         function updateGradient() {
             var c0_0 = colors[colorIndices[0]];
             var c0_1 = colors[colorIndices[1]];
@@ -645,9 +582,7 @@ try {
             }
             requestAnimationFrame(updateGradient);
         }
-
         requestAnimationFrame(updateGradient);
-
         // Context Menu Disable
         document.addEventListener('contextmenu', function(event) {
             if (!event.target.closest('a')) {
